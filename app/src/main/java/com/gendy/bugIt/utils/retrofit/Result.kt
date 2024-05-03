@@ -1,17 +1,17 @@
 package com.gendy.bugIt.utils.retrofit
 
-sealed class Result<out T> {
-    data object Loading : Result<Nothing>()
+sealed class ApiResult<out T> {
+    data object Loading : ApiResult<Nothing>()
 
-    data class Success<T>(val data: T) : Result<T>()
+    data class Success<T>(val data: T) : ApiResult<T>()
     data class Error(
         val code: Int? = null,
         val message: String? = null,
         val exception: Exception? = null,
         val didErrorParse: Boolean? = null
-    ) : Result<Nothing>()
+    ) : ApiResult<Nothing>()
 
-    data object NoInternetConnection : Result<Nothing>()
+    data object NoInternetConnection : ApiResult<Nothing>()
 }
 
 

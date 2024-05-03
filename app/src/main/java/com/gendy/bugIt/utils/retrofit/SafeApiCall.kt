@@ -9,15 +9,15 @@ import retrofit2.HttpException
 interface SafeApiCall {
     suspend fun <T> safeApiCall(
         apiCall: suspend () -> T
-    ): Result<T> {
+    ): ApiResult<T> {
         return withContext(Dispatchers.IO) {
             try {
-                Result.Success(apiCall.invoke())
+                ApiResult.Success(apiCall.invoke())
             } catch (e: Exception) {
                 logDebug(e.stackTraceToString())
                 when (e) {
                     is HttpException -> {
-                        Result.Error(
+                        ApiResult.Error(
                             code = e.code(),
                             message = e.message(),
                             exception = e,
@@ -26,11 +26,11 @@ interface SafeApiCall {
                     }
 
                     is NoInternetConnectionException -> {
-                        Result.NoInternetConnection
+                        ApiResult.NoInternetConnection
                     }
 
                     else -> {
-                        Result.Error(exception = e)
+                        ApiResult.Error(exception = e)
                     }
                 }
             }
