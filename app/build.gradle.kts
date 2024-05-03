@@ -85,4 +85,10 @@ dependencies {
     implementation(libs.splashScreen)
 
 
+    // Retrofit
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.gsonConverter)
+    implementation(libs.retrofit.loggingInterceptor)
+
+
 }
