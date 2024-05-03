@@ -4,6 +4,7 @@ import androidx.compose.runtime.MutableState
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.navigation
+import com.gendy.bugIt.home.presentation.TicketsScreen
 import com.gendy.bugIt.utils.navigation.composable
 import com.gendy.bugIt.utils.navigation.screens.HomeScreens
 
@@ -19,7 +20,8 @@ fun NavGraphBuilder.homeGraph(
 
 
         composable(HomeScreens.TicketsScreen) { entry ->
-
+            isBottomSheetVisibleState.value = true
+            TicketsScreen()
         }
 
         composable(HomeScreens.TicketDetailsScreen) { entry ->

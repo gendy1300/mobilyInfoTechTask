@@ -1,7 +1,5 @@
 package com.gendy.bugIt.utils.navigation
 
-import com.gendy.bugIt.utils.navigation.NavigationIntent
-import com.gendy.bugIt.utils.navigation.screens.LoginScreens
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import javax.inject.Inject
@@ -62,16 +60,6 @@ class AppNavigatorImpl @Inject constructor() : AppNavigator {
         )
     }
 
-    override fun logOut() {
-        navigationChannel.trySend(
-            NavigationIntent.NavigateTo(
-                route = LoginScreens.ROOT_ROUTE,
-                popUpToRoute = LoginScreens.GetStartedScreen(),
-                inclusive = true,
-                isSingleTop = true,
-            )
-        )
-    }
 
 
 }

@@ -1,6 +1,5 @@
 package com.gendy.bugIt.utils.navigation
 
-import com.gendy.bugIt.utils.navigation.NavigationIntent
 import kotlinx.coroutines.channels.Channel
 
 interface AppNavigator {
@@ -30,9 +29,6 @@ interface AppNavigator {
         inclusive: Boolean = false,
         isSingleTop: Boolean = false,
     )
-
-
-    fun logOut()
 
 
 }
