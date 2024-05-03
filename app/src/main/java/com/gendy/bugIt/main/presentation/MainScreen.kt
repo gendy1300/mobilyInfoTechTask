@@ -6,6 +6,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.interaction.Interaction
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,9 +16,9 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -156,7 +157,10 @@ fun BottomNav() {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
 
 
-    BottomAppBar(modifier = Modifier
+    BottomAppBar(
+        containerColor = Color.White,
+        tonalElevation = 30.dp,
+        modifier = Modifier
         .height(
             50.dp + WindowInsets.systemBars
                 .asPaddingValues()
@@ -181,20 +185,22 @@ fun BottomNav() {
         bottomNavigationItems.forEach { bottomNavigationItem ->
             val selected =
                 currentDestination?.hierarchy?.any { it.route == bottomNavigationItem.route } == true
-            BottomNavigationItem(interactionSource = NoRippleInteractionSource, icon = {
-                Icon(
-                    painter = painterResource(id = if (selected) bottomNavigationItem.filledIcon else bottomNavigationItem.icon),
-                    contentDescription = null,
-                    tint = Color.Unspecified
-                )
-            }, label = {
-                BugItText(
-                    text = stringResource(bottomNavigationItem.resourceId),
-                    fontSize = 8.sp,
-                    color = if (!selected) TextUnselectedColor else Color.Black,
-                    maxLines = 1
-                )
-            }, selected = selected, onClick = {
+            IconButton(interactionSource = NoRippleInteractionSource, content = {
+                Column {
+                    Icon(
+                        painter = painterResource(id = if (selected) bottomNavigationItem.filledIcon else bottomNavigationItem.icon),
+                        contentDescription = null,
+                        tint = Color.Unspecified
+                    )
+
+                    BugItText(
+                        text = stringResource(bottomNavigationItem.resourceId),
+                        fontSize = 8.sp,
+                        color = if (!selected) TextUnselectedColor else Color.Black,
+                        maxLines = 1
+                    )
+                }
+            }, onClick = {
                 navController.navigate(bottomNavigationItem.route) {
                     popUpTo(navController.graph.findStartDestination().id) {
                         saveState = true
