@@ -88,6 +88,7 @@ class HomeViewmodel @Inject constructor(
 
             }
 
+            _ticketsUiState.value = TicketsUiState.Success(bugsList = ticketsList)
             logDebug(ticketsList.joinToString(","))
         }
 
