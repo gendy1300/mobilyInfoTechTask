@@ -7,6 +7,8 @@ import retrofit2.http.Path
 interface HomeApis {
 
     @GET("spreadsheets/{spreadsheetId}")
-    suspend fun getBugData(@Path("spreadsheetId") sheetId: String): String
+    suspend fun getBugData(
+        @Path("spreadsheetId") sheetId: String
+    ): String
 
 }

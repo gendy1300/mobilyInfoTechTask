@@ -1,8 +1,9 @@
 package com.gendy.bugIt.utils.retrofit
 
 import android.content.Context
-import com.google.gson.GsonBuilder
+import com.gendy.bugIt.utils.retrofit.interceptor.AuthInterceptor
 import com.gendy.bugIt.utils.retrofit.interceptor.NetworkInterceptor
+import com.google.gson.GsonBuilder
 import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -34,6 +35,7 @@ class RetrofitClient @Inject constructor(
                     .readTimeout(60, TimeUnit.SECONDS)
                     .connectTimeout(60, TimeUnit.SECONDS)
                     .addInterceptor(NetworkInterceptor(context))
+                    .addInterceptor(AuthInterceptor())
                     .also {
                         it.addInterceptor(logging)
                     }
