@@ -14,5 +14,9 @@ class HomeRepoImp @Inject constructor(
         api.getBugData("1d4e_o0qAMeUpdjMTIacBEVc7eRJbBc_MTjks2Q3snfU")
     }
 
+    override suspend fun getDataFromSheet(titles:String) = safeApiCall {
+        api.getASpecificSheet("1d4e_o0qAMeUpdjMTIacBEVc7eRJbBc_MTjks2Q3snfU", titles)
+    }
+
 
 }
