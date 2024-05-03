@@ -14,7 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.gendy.bugIt.ui.theme.BugItTheme
+import com.gendy.bugIt.main.presentation.MainScreen
+import com.gendy.bugIt.utils.theme.BugItTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -22,33 +23,14 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
-
         installSplashScreen()
 
         enableEdgeToEdge()
 
         setContent {
             BugItTheme {
-                // A surface container using the 'background' color from the theme
-              Greeting(name = "kf")
+                MainScreen()
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    BugItTheme {
-        Greeting("Android")
     }
 }
