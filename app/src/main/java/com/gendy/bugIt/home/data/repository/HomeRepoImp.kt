@@ -11,11 +11,12 @@ class HomeRepoImp @Inject constructor(
 
 
     override suspend fun getBugData() = safeApiCall {
-        api.getBugData("1d4e_o0qAMeUpdjMTIacBEVc7eRJbBc_MTjks2Q3snfU")
+        api.getBugData()
     }
 
-    override suspend fun getDataFromSheet(titles:String) = safeApiCall {
-        api.getASpecificSheet("1d4e_o0qAMeUpdjMTIacBEVc7eRJbBc_MTjks2Q3snfU", titles)
+
+    override suspend fun createASheetTabWithDate(date: String) = safeApiCall {
+        api.createSheet(sheetName = date)
     }
 
 

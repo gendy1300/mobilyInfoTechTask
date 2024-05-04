@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.gendy.bugIt.home.domain.model.BugsListModel
 import com.gendy.bugIt.home.domain.repositories.HomeRepo
 import com.gendy.bugIt.home.presentation.TicketsUiState
+import com.gendy.bugIt.utils.checkIfItHasTodaySheet
+import com.gendy.bugIt.utils.createTodayDate
 import com.gendy.bugIt.utils.logDebug
 import com.gendy.bugIt.utils.navigation.AppNavigator
 import com.gendy.bugIt.utils.retrofit.ApiResult
@@ -24,17 +26,17 @@ class HomeViewmodel @Inject constructor(
     val ticketsUiState = _ticketsUiState.asStateFlow()
 
     init {
-        callGetSpreadSheet()
+        callGetBugs()
     }
 
     fun processIntent(intent: HomeViewIntent) {
         when (intent) {
-            HomeViewIntent.GetBugData -> callGetSpreadSheet()
+            HomeViewIntent.GetBugData -> callGetBugs()
         }
     }
 
 
-    private fun callGetSpreadSheet() {
+    private fun callGetBugs() {
         viewModelScope.launch {
             when (val response = repo.getBugData()) {
                 is ApiResult.Error -> {
@@ -50,48 +52,11 @@ class HomeViewmodel @Inject constructor(
                 }
 
                 is ApiResult.Success -> {
-                    val titlesList =
-                        response.data.sheets?.mapNotNull { it.properties?.title } ?: listOf()
-
-                    getTicketsFromOneSheet(titlesList)
-
+                    _ticketsUiState.value = TicketsUiState.Success(response.data)
                 }
             }
         }
     }
 
-    private fun getTicketsFromOneSheet(sheetTitles: List<String>) {
-        viewModelScope.launch {
-            val ticketsList = arrayListOf<BugsListModel>()
-            sheetTitles.forEach {
-                launch {
-                    when (val response = repo.getDataFromSheet(it)) {
-                        is ApiResult.Error -> {}
-                        ApiResult.Loading -> {}
-                        ApiResult.NoInternetConnection -> {}
-                        is ApiResult.Success -> {
-                            response.data.values?.drop(1)?.forEach { item ->
-                                ticketsList.add(
-                                    BugsListModel(
-                                        id = item?.getOrNull(0) ?: "",
-                                        title = item?.getOrNull(1) ?: "",
-                                        description = item?.getOrNull(2) ?: "",
-                                        imageUrl = item?.getOrNull(3) ?: "",
-                                        reporterName = item?.getOrNull(4) ?: "",
-                                        date = item?.getOrNull(5) ?: ""
-                                    )
-                                )
-                            }
-                        }
-                    }
-                }.join()
-
-            }
-
-            _ticketsUiState.value = TicketsUiState.Success(bugsList = ticketsList)
-            logDebug(ticketsList.joinToString(","))
-        }
-
-    }
 
 }
