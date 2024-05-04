@@ -43,6 +43,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.gendy.bugIt.R
+import com.gendy.bugIt.main.viewmodel.MainViewIntents
 import com.gendy.bugIt.main.viewmodel.MainViewModel
 import com.gendy.bugIt.utils.BugItText
 import com.gendy.bugIt.utils.SnackBarLayout
@@ -95,7 +96,9 @@ fun MainScreen(
             enter = slideInVertically(initialOffsetY = { it }),
             exit = slideOutVertically(targetOffsetY = { it }),
         ) {
-            BottomNav()
+            BottomNav(onAddBugClicked = {
+                mainViewModel.processIntent(MainViewIntents.NavigateToAddBug)
+            })
         }
 
 
@@ -152,7 +155,7 @@ object NoRippleInteractionSource : MutableInteractionSource {
 }
 
 @Composable
-fun BottomNav() {
+fun BottomNav(onAddBugClicked: () -> Unit) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
 
@@ -161,58 +164,58 @@ fun BottomNav() {
         containerColor = Color.White,
         tonalElevation = 30.dp,
         modifier = Modifier
-        .height(
-            50.dp + WindowInsets.systemBars
-                .asPaddingValues()
-                .calculateBottomPadding()
-        )
-        .fillMaxWidth(), floatingActionButton = {
-        FloatingActionButton(
-            onClick = { /*TODO*/ },
-            shape = RoundedCornerShape(8.dp),
-            backgroundColor = BlueColor
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.plus_icon),
-                contentDescription = null,
+            .height(
+                50.dp + WindowInsets.systemBars
+                    .asPaddingValues()
+                    .calculateBottomPadding()
+            )
+            .fillMaxWidth(), floatingActionButton = {
+            FloatingActionButton(
+                onClick = { onAddBugClicked() },
+                shape = RoundedCornerShape(8.dp),
+                backgroundColor = BlueColor
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.plus_icon),
+                    contentDescription = null,
 
-                )
-        }
-    }, actions = {
-
-        val currentDestination = navBackStackEntry?.destination
-
-        bottomNavigationItems.forEach { bottomNavigationItem ->
-            val selected =
-                currentDestination?.hierarchy?.any { it.route == bottomNavigationItem.route } == true
-            IconButton(interactionSource = NoRippleInteractionSource, content = {
-                Column {
-                    Icon(
-                        painter = painterResource(id = if (selected) bottomNavigationItem.filledIcon else bottomNavigationItem.icon),
-                        contentDescription = null,
-                        tint = Color.Unspecified
                     )
+            }
+        }, actions = {
 
-                    BugItText(
-                        text = stringResource(bottomNavigationItem.resourceId),
-                        fontSize = 8.sp,
-                        color = if (!selected) TextUnselectedColor else Color.Black,
-                        maxLines = 1
-                    )
-                }
-            }, onClick = {
-                navController.navigate(bottomNavigationItem.route) {
-                    popUpTo(navController.graph.findStartDestination().id) {
-                        saveState = true
+            val currentDestination = navBackStackEntry?.destination
+
+            bottomNavigationItems.forEach { bottomNavigationItem ->
+                val selected =
+                    currentDestination?.hierarchy?.any { it.route == bottomNavigationItem.route } == true
+                IconButton(interactionSource = NoRippleInteractionSource, content = {
+                    Column {
+                        Icon(
+                            painter = painterResource(id = if (selected) bottomNavigationItem.filledIcon else bottomNavigationItem.icon),
+                            contentDescription = null,
+                            tint = Color.Unspecified
+                        )
+
+                        BugItText(
+                            text = stringResource(bottomNavigationItem.resourceId),
+                            fontSize = 8.sp,
+                            color = if (!selected) TextUnselectedColor else Color.Black,
+                            maxLines = 1
+                        )
                     }
+                }, onClick = {
+                    navController.navigate(bottomNavigationItem.route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
 
-                    launchSingleTop = true
+                        launchSingleTop = true
 
-                    restoreState = true
-                }
-            })
+                        restoreState = true
+                    }
+                })
+            }
         }
-    }
 
     )
 
@@ -221,7 +224,7 @@ fun BottomNav() {
 @Preview
 @Composable
 private fun preview() {
-    BottomNav()
+    BottomNav(onAddBugClicked = {})
 }
 
 

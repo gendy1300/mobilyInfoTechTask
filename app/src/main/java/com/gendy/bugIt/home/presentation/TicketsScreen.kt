@@ -118,7 +118,7 @@ fun TicketsLayout(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(bugsList) { item ->
-                        TicketItemLayout(item)
+                        TicketItemLayout(item, onItemClicked)
                     }
                 }
 
@@ -134,12 +134,13 @@ fun TicketsLayout(
 
 
 @Composable
-fun TicketItemLayout(bugsListModel: BugsListModel) {
+fun TicketItemLayout(bugsListModel: BugsListModel, onItemClicked: () -> Unit) {
 
     ElevatedCard(
         elevation = CardDefaults.cardElevation(10.dp),
         shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        onClick = onItemClicked
     ) {
         Box(
             modifier = Modifier

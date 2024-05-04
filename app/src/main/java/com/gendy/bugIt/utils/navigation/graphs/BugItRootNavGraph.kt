@@ -49,6 +49,11 @@ fun bugItRootNavGraph(
                 loading = show
             }, navController = navController)
 
+            addBugGraph(isBottomSheetVisibleState = isBottomBarVisible, showSnackBar = { message ->
+                showSnackBar(scope = scope, snackBarHost = snackBarHostState, message = message)
+            }, showLoading = { show: Boolean ->
+                loading = show
+            }, navController = navController)
 
         }
 
