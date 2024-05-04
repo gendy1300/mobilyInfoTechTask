@@ -21,7 +21,10 @@ fun NavGraphBuilder.homeGraph(
 
         composable(HomeScreens.TicketsScreen) { entry ->
             isBottomSheetVisibleState.value = true
-            TicketsScreen()
+            TicketsScreen(
+                showLoading = showLoading,
+                showSnackBar = showSnackBar
+            )
         }
 
         composable(HomeScreens.TicketDetailsScreen) { entry ->

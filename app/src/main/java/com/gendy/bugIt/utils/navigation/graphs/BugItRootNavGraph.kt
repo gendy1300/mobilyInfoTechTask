@@ -14,6 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.gendy.bugIt.utils.LoadingComponent
 import com.gendy.bugIt.utils.navigation.NavHost
 import com.gendy.bugIt.utils.navigation.screens.Destination
 import com.gendy.bugIt.utils.showSnackBar
@@ -49,6 +50,10 @@ fun bugItRootNavGraph(
             }, navController = navController)
 
 
+        }
+
+        if (loading) {
+            LoadingComponent()
         }
     }
 }
