@@ -15,7 +15,6 @@ sealed class HomeScreens {
         val ROUTE_ICON = R.drawable.home_icon
         private const val TICKETS_SCREEN_ROUTE = "ticketsScreen"
         private const val TICKET_DETAILS_SCREEN_ROUTE = "ticketDetailsScreen"
-        const val TICKET_ID_KEY = "ticketId"
     }
 }
 

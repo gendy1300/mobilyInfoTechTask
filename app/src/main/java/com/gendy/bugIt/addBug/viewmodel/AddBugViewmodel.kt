@@ -18,6 +18,7 @@ import com.gendy.bugIt.home.domain.model.BugsListModel
 import com.gendy.bugIt.utils.createTodayDate
 import com.gendy.bugIt.utils.getImageFile
 import com.gendy.bugIt.utils.navigation.AppNavigator
+import com.gendy.bugIt.utils.preferences.PreferencesManager
 import com.gendy.bugIt.utils.retrofit.ApiResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,7 +29,8 @@ import javax.inject.Inject
 @HiltViewModel
 class AddBugViewmodel @Inject constructor(
     private val appNavigator: AppNavigator,
-    private val repo: AddBugRepo
+    private val repo: AddBugRepo,
+    private val preferenceManger: PreferencesManager,
 ) : ViewModel() {
 
 
@@ -92,7 +94,7 @@ class AddBugViewmodel @Inject constructor(
                     title = title.toString(),
                     description = description.toString(),
                     photo = imageUrl,
-                    reporterName = "user 1",
+                    reporterName = preferenceManger.getReportedName(),
                     date = createTodayDate()
                 )
             }

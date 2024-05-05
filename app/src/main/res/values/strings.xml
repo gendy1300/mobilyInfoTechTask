@@ -8,6 +8,7 @@
 
     <string name="by">by %1$s</string>
     <string name="reportedBy">Reported by %1$s</string>
+    <string name="reportedName">Reported Name</string>
 
 
     <string name="addABug">Create A Bug</string>
@@ -16,6 +17,8 @@
     <string name="chooseAnImage">Choose An Image</string>
     <string name="title">Title</string>
     <string name="description">description</string>
+    <string name="profile">Profile</string>
+    <string name="confirm">Confirm</string>
 
 
 </resources>

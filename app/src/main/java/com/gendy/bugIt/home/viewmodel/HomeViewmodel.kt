@@ -28,9 +28,6 @@ class HomeViewmodel @Inject constructor(
 
     val selectedBugData = mutableStateOf(createEmptyBugModel())
 
-    init {
-        callGetBugs()
-    }
 
     fun processIntent(intent: HomeViewIntent) {
         when (intent) {

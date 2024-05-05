@@ -21,6 +21,7 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -62,6 +63,10 @@ fun TicketsScreen(
 
     val bugList = remember {
         mutableStateListOf<BugsListModel>()
+    }
+
+    LaunchedEffect(key1 = Unit) {
+        viewmodel.processIntent(HomeViewIntent.GetBugData)
     }
 
     when (uiState) {
@@ -117,9 +122,9 @@ fun TicketsLayout(
                     .padding(top = 10.dp)
             ) {
                 LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    items(bugsList) { item ->
+                    items(bugsList.reversed()) { item ->
                         TicketItemLayout(item, onItemClicked)
                     }
                 }

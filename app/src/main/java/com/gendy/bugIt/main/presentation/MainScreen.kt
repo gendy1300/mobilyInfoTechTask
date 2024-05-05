@@ -33,7 +33,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -59,7 +58,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 
 
 val bottomNavigationItems = listOf(
-    BottomNavigationItems.Home, BottomNavigationItems.Home
+    BottomNavigationItems.Home, BottomNavigationItems.Profile
 )
 
 
@@ -68,9 +67,9 @@ fun MainScreen(
     mainViewModel: MainViewModel = hiltViewModel()
 ) {
 
-
     val snackBarHostState = remember { SnackbarHostState() }
     val navController = rememberNavController()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
 
 
     val isBottomBarVisible = remember {
@@ -96,9 +95,66 @@ fun MainScreen(
             enter = slideInVertically(initialOffsetY = { it }),
             exit = slideOutVertically(targetOffsetY = { it }),
         ) {
-            BottomNav(onAddBugClicked = {
-                mainViewModel.processIntent(MainViewIntents.NavigateToAddBug)
-            })
+            BottomAppBar(
+                containerColor = Color.White,
+                tonalElevation = 30.dp,
+                modifier = Modifier
+                    .height(
+                        50.dp + WindowInsets.systemBars
+                            .asPaddingValues()
+                            .calculateBottomPadding()
+                    )
+                    .fillMaxWidth(), floatingActionButton = {
+                    FloatingActionButton(
+                        onClick = { mainViewModel.processIntent(MainViewIntents.NavigateToAddBug) },
+                        shape = RoundedCornerShape(8.dp),
+                        backgroundColor = BlueColor
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.plus_icon),
+                            contentDescription = null,
+                            tint = Color.White
+                        )
+                    }
+                }, actions = {
+
+                    val currentDestination = navBackStackEntry?.destination
+
+                    bottomNavigationItems.forEach { bottomNavigationItem ->
+                        val selected =
+                            currentDestination?.hierarchy?.any { it.route == bottomNavigationItem.route } == true
+                        IconButton(interactionSource = NoRippleInteractionSource, content = {
+                            Column {
+                                Icon(
+                                    painter = painterResource(id = if (selected) bottomNavigationItem.filledIcon else bottomNavigationItem.icon),
+                                    contentDescription = null,
+                                    tint = Color.Unspecified
+                                )
+
+                                BugItText(
+                                    text = stringResource(bottomNavigationItem.resourceId),
+                                    fontSize = 8.sp,
+                                    color = if (!selected) TextUnselectedColor else Color.Black,
+                                    maxLines = 1
+                                )
+                            }
+                        }, onClick = {
+                            navController.navigate(bottomNavigationItem.route) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+
+                                launchSingleTop = true
+
+                                restoreState = true
+
+                            }
+                        })
+                    }
+                }
+
+            )
+
         }
 
 
@@ -154,77 +210,6 @@ object NoRippleInteractionSource : MutableInteractionSource {
     override fun tryEmit(interaction: Interaction) = true
 }
 
-@Composable
-fun BottomNav(onAddBugClicked: () -> Unit) {
-    val navController = rememberNavController()
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
 
-
-    BottomAppBar(
-        containerColor = Color.White,
-        tonalElevation = 30.dp,
-        modifier = Modifier
-            .height(
-                50.dp + WindowInsets.systemBars
-                    .asPaddingValues()
-                    .calculateBottomPadding()
-            )
-            .fillMaxWidth(), floatingActionButton = {
-            FloatingActionButton(
-                onClick = { onAddBugClicked() },
-                shape = RoundedCornerShape(8.dp),
-                backgroundColor = BlueColor
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.plus_icon),
-                    contentDescription = null,
-                    tint = Color.White
-                )
-            }
-        }, actions = {
-
-            val currentDestination = navBackStackEntry?.destination
-
-            bottomNavigationItems.forEach { bottomNavigationItem ->
-                val selected =
-                    currentDestination?.hierarchy?.any { it.route == bottomNavigationItem.route } == true
-                IconButton(interactionSource = NoRippleInteractionSource, content = {
-                    Column {
-                        Icon(
-                            painter = painterResource(id = if (selected) bottomNavigationItem.filledIcon else bottomNavigationItem.icon),
-                            contentDescription = null,
-                            tint = Color.Unspecified
-                        )
-
-                        BugItText(
-                            text = stringResource(bottomNavigationItem.resourceId),
-                            fontSize = 8.sp,
-                            color = if (!selected) TextUnselectedColor else Color.Black,
-                            maxLines = 1
-                        )
-                    }
-                }, onClick = {
-                    navController.navigate(bottomNavigationItem.route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
-
-                        launchSingleTop = true
-
-                        restoreState = true
-                    }
-                })
-            }
-        }
-
-    )
-
-}
-
-@Preview
-@Composable
-private fun preview() {
-    BottomNav(onAddBugClicked = {})
-}
 
 

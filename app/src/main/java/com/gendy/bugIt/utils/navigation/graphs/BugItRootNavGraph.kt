@@ -55,6 +55,12 @@ fun bugItRootNavGraph(
                 loading = show
             }, navController = navController)
 
+            profileGraph(
+                isBottomSheetVisibleState = isBottomBarVisible
+            ) { show: Boolean ->
+                loading = show
+            }
+
         }
 
         if (loading) {
