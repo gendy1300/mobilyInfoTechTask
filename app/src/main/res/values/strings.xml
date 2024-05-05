@@ -7,4 +7,12 @@
 
     <string name="by">by %1$s</string>
 
+
+    <string name="addABug">Create A Bug</string>
+
+
+    <string name="chooseAnImage">Choose An Image</string>
+    <string name="title">Title</string>
+
+
 </resources>

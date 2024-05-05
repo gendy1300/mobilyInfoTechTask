@@ -5,7 +5,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.navigation
 import com.gendy.bugIt.addBug.presentation.AddBugScreen
-import com.gendy.bugIt.utils.logDebug
 import com.gendy.bugIt.utils.navigation.composable
 import com.gendy.bugIt.utils.navigation.screens.AddBugScreens
 
@@ -22,11 +21,7 @@ fun NavGraphBuilder.addBugGraph(
 
         composable(AddBugScreens.AddBugScreen) { entry ->
             isBottomSheetVisibleState.value = true
-            AddBugScreen(
-                onImageSelected = {
-                    logDebug(it.toString())
-                }
-            )
+            AddBugScreen(showSnackBar = showSnackBar, showLoading = showLoading)
         }
 
     }

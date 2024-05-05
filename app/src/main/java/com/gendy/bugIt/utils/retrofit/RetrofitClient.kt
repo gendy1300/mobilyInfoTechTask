@@ -17,7 +17,7 @@ class RetrofitClient @Inject constructor(
 ) {
     fun <T> buildApi(api: Class<T>): T {
         val baseUrl =
-            "https://script.google.com/macros/s/AKfycbx8jcMaUl-3tGuTzcw6RwaFM4mGl2PRT5u1WVYNodP-hp3_o2C2u9kZePqkrNxeMIVI/"
+            "https://script.google.com/macros/s/AKfycbwbDysPSVAb_j9GYv7-wzl5WFtUng6GAwfq1lsF2ZXofsFVqjhLQPA3Eo1dMAXRbr_5/"
         val gson = GsonBuilder()
             .setLenient()
             .create()

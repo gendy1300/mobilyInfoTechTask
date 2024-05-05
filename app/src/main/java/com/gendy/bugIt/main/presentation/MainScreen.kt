@@ -178,8 +178,8 @@ fun BottomNav(onAddBugClicked: () -> Unit) {
                 Icon(
                     painter = painterResource(id = R.drawable.plus_icon),
                     contentDescription = null,
-
-                    )
+                    tint = Color.White
+                )
             }
         }, actions = {
 

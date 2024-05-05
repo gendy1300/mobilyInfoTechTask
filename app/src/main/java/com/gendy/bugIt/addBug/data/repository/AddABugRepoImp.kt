@@ -13,7 +13,8 @@ import javax.inject.Inject
 class AddABugRepoImp @Inject constructor(
     private var api: AddBugApis
 ) : AddBugRepo, SafeApiCall {
-    override suspend fun uploadImage(image: File) {
+    override suspend fun uploadImage(image: File) = safeApiCall {
+
         val imageRequestBody = image.asRequestBody("image/*".toMediaTypeOrNull())
         val imagePart = MultipartBody.Part.createFormData("image", image.name, imageRequestBody)
         val apiKeyPart =
