@@ -27,7 +27,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddBugViewmodel @Inject constructor(
-    val appNavigator: AppNavigator,
+    private val appNavigator: AppNavigator,
     private val repo: AddBugRepo
 ) : ViewModel() {
 

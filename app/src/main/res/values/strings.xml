@@ -4,8 +4,10 @@
 
 
     <string name="tickets">Tickets</string>
+    <string name="ticketDetails">Ticket Details</string>
 
     <string name="by">by %1$s</string>
+    <string name="reportedBy">Reported by %1$s</string>
 
 
     <string name="addABug">Create A Bug</string>

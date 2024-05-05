@@ -1,11 +1,14 @@
 package com.gendy.bugIt.home.viewmodel
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gendy.bugIt.home.domain.repositories.HomeRepo
 import com.gendy.bugIt.home.presentation.TicketsUiState
+import com.gendy.bugIt.utils.createEmptyBugModel
 import com.gendy.bugIt.utils.createTodayDate
 import com.gendy.bugIt.utils.navigation.AppNavigator
+import com.gendy.bugIt.utils.navigation.screens.HomeScreens
 import com.gendy.bugIt.utils.retrofit.ApiResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,6 +25,9 @@ class HomeViewmodel @Inject constructor(
     private val _ticketsUiState = MutableStateFlow<TicketsUiState>(TicketsUiState.Loading)
     val ticketsUiState = _ticketsUiState.asStateFlow()
 
+
+    val selectedBugData = mutableStateOf(createEmptyBugModel())
+
     init {
         callGetBugs()
     }
@@ -29,6 +35,12 @@ class HomeViewmodel @Inject constructor(
     fun processIntent(intent: HomeViewIntent) {
         when (intent) {
             HomeViewIntent.GetBugData -> callGetBugs()
+
+            is HomeViewIntent.NavigateToBugDetails -> {
+                selectedBugData.value = intent.bugData
+
+                appNavigator.tryNavigateTo(HomeScreens.TicketDetailsScreen())
+            }
         }
     }
 

@@ -65,6 +65,21 @@ fun createTodayDate(): String {
     return currentDateTime.format(formatter)
 }
 
+fun String.toFormattedDate(): String {
+
+    return try {
+        val inputFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+        val date = LocalDate.parse(this, inputFormat)
+
+        // Format the LocalDate object into the desired format
+        val outputFormat = DateTimeFormatter.ofPattern("yyyy/M/d")
+        date.format(outputFormat)
+    } catch (e: Exception) {
+        this
+    }
+
+}
+
 fun createEmptyBugModel(): BugsListModel {
     return BugsListModel(
         title = "",

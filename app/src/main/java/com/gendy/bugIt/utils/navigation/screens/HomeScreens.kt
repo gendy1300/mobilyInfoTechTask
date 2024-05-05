@@ -1,17 +1,12 @@
 package com.gendy.bugIt.utils.navigation.screens
 
 import com.gendy.bugIt.R
-import com.gendy.bugIt.utils.appendParams
 
 sealed class HomeScreens {
     data object TicketsScreen : Destination.NoArgumentsDestination(TICKETS_SCREEN_ROUTE)
 
 
-    data object TicketDetailsScreen : Destination(TICKET_DETAILS_SCREEN_ROUTE, TICKET_ID_KEY) {
-        operator fun invoke(ticketId: String): String = route.appendParams(
-            TICKET_ID_KEY to ticketId,
-        )
-    }
+    data object TicketDetailsScreen :  Destination.NoArgumentsDestination(TICKET_DETAILS_SCREEN_ROUTE)
 
     companion object {
         const val ROOT_ROUTE = "home"

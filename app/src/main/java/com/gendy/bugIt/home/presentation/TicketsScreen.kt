@@ -47,6 +47,7 @@ import com.gendy.bugIt.utils.BugItText
 import com.gendy.bugIt.utils.Margin
 import com.gendy.bugIt.utils.theme.BlueColor
 import com.gendy.bugIt.utils.theme.cardPadding
+import com.gendy.bugIt.utils.toFormattedDate
 
 
 @Composable
@@ -85,7 +86,7 @@ fun TicketsScreen(
         viewmodel.processIntent(HomeViewIntent.GetBugData)
 
     }, onItemClicked = {
-
+        viewmodel.processIntent(HomeViewIntent.NavigateToBugDetails(it))
     })
 }
 
@@ -96,7 +97,7 @@ fun TicketsLayout(
     bugsList: List<BugsListModel>,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
-    onItemClicked: () -> Unit
+    onItemClicked: (bugData: BugsListModel) -> Unit
 ) {
     val pullToRefreshState = rememberPullRefreshState(isRefreshing, onRefresh)
     if (bugsList.isNotEmpty())
@@ -135,13 +136,16 @@ fun TicketsLayout(
 
 
 @Composable
-fun TicketItemLayout(bugsListModel: BugsListModel, onItemClicked: () -> Unit) {
+fun TicketItemLayout(
+    bugsListModel: BugsListModel,
+    onItemClicked: (bugsListModel: BugsListModel) -> Unit
+) {
 
     ElevatedCard(
         elevation = CardDefaults.cardElevation(10.dp),
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        onClick = onItemClicked
+        onClick = { onItemClicked(bugsListModel) }
     ) {
         Box(
             modifier = Modifier
@@ -167,7 +171,7 @@ fun TicketItemLayout(bugsListModel: BugsListModel, onItemClicked: () -> Unit) {
 
 
                     BugItText(
-                        text = bugsListModel.date,
+                        text = bugsListModel.date.toFormattedDate(),
                         fontSize = 9.sp
                     )
                 }
