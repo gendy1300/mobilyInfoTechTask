@@ -1,12 +1,14 @@
 package com.gendy.bugIt.home.viewmodel
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gendy.bugIt.home.domain.model.BugsListModel
 import com.gendy.bugIt.home.domain.repositories.HomeRepo
 import com.gendy.bugIt.home.presentation.TicketsUiState
-import com.gendy.bugIt.utils.logDebug
+import com.gendy.bugIt.utils.createEmptyBugModel
+import com.gendy.bugIt.utils.createTodayDate
 import com.gendy.bugIt.utils.navigation.AppNavigator
+import com.gendy.bugIt.utils.navigation.screens.HomeScreens
 import com.gendy.bugIt.utils.retrofit.ApiResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,19 +25,29 @@ class HomeViewmodel @Inject constructor(
     private val _ticketsUiState = MutableStateFlow<TicketsUiState>(TicketsUiState.Loading)
     val ticketsUiState = _ticketsUiState.asStateFlow()
 
-    init {
-        callGetSpreadSheet()
-    }
+
+    val selectedBugData = mutableStateOf(createEmptyBugModel())
+
 
     fun processIntent(intent: HomeViewIntent) {
         when (intent) {
-            HomeViewIntent.GetBugData -> callGetSpreadSheet()
+            HomeViewIntent.GetBugData -> callGetBugs()
+
+            is HomeViewIntent.NavigateToBugDetails -> {
+                selectedBugData.value = intent.bugData
+
+                appNavigator.tryNavigateTo(HomeScreens.TicketDetailsScreen())
+            }
         }
     }
 
 
-    private fun callGetSpreadSheet() {
+    private fun callGetBugs() {
+
         viewModelScope.launch {
+
+            repo.createASheetTabWithDate(createTodayDate())
+
             when (val response = repo.getBugData()) {
                 is ApiResult.Error -> {
                     _ticketsUiState.value = TicketsUiState.NetworkError(response.message.toString())
@@ -50,48 +62,11 @@ class HomeViewmodel @Inject constructor(
                 }
 
                 is ApiResult.Success -> {
-                    val titlesList =
-                        response.data.sheets?.mapNotNull { it.properties?.title } ?: listOf()
-
-                    getTicketsFromOneSheet(titlesList)
-
+                    _ticketsUiState.value = TicketsUiState.Success(response.data)
                 }
             }
         }
     }
 
-    private fun getTicketsFromOneSheet(sheetTitles: List<String>) {
-        viewModelScope.launch {
-            val ticketsList = arrayListOf<BugsListModel>()
-            sheetTitles.forEach {
-                launch {
-                    when (val response = repo.getDataFromSheet(it)) {
-                        is ApiResult.Error -> {}
-                        ApiResult.Loading -> {}
-                        ApiResult.NoInternetConnection -> {}
-                        is ApiResult.Success -> {
-                            response.data.values?.drop(1)?.forEach { item ->
-                                ticketsList.add(
-                                    BugsListModel(
-                                        id = item?.getOrNull(0) ?: "",
-                                        title = item?.getOrNull(1) ?: "",
-                                        description = item?.getOrNull(2) ?: "",
-                                        imageUrl = item?.getOrNull(3) ?: "",
-                                        reporterName = item?.getOrNull(4) ?: "",
-                                        date = item?.getOrNull(5) ?: ""
-                                    )
-                                )
-                            }
-                        }
-                    }
-                }.join()
-
-            }
-
-            _ticketsUiState.value = TicketsUiState.Success(bugsList = ticketsList)
-            logDebug(ticketsList.joinToString(","))
-        }
-
-    }
 
 }

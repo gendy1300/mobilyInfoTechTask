@@ -91,4 +91,11 @@ dependencies {
     implementation(libs.retrofit.loggingInterceptor)
 
 
+    //LottieAnimations
+    implementation(libs.lottie)
+
+    //DataStore
+    implementation(libs.dataStore)
+
+
 }

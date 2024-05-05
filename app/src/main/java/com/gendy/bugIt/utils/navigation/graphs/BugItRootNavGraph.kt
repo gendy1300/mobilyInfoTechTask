@@ -14,6 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.gendy.bugIt.utils.LoadingComponent
 import com.gendy.bugIt.utils.navigation.NavHost
 import com.gendy.bugIt.utils.navigation.screens.Destination
 import com.gendy.bugIt.utils.showSnackBar
@@ -48,7 +49,22 @@ fun bugItRootNavGraph(
                 loading = show
             }, navController = navController)
 
+            addBugGraph(isBottomSheetVisibleState = isBottomBarVisible, showSnackBar = { message ->
+                showSnackBar(scope = scope, snackBarHost = snackBarHostState, message = message)
+            }, showLoading = { show: Boolean ->
+                loading = show
+            }, navController = navController)
 
+            profileGraph(
+                isBottomSheetVisibleState = isBottomBarVisible
+            ) { show: Boolean ->
+                loading = show
+            }
+
+        }
+
+        if (loading) {
+            LoadingComponent()
         }
     }
 }

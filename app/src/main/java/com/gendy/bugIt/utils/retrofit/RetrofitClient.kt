@@ -16,7 +16,8 @@ class RetrofitClient @Inject constructor(
     @ApplicationContext val context: Context
 ) {
     fun <T> buildApi(api: Class<T>): T {
-        val baseUrl = "https://sheets.googleapis.com/v4/"
+        val baseUrl =
+            "https://script.google.com/macros/s/AKfycbwbDysPSVAb_j9GYv7-wzl5WFtUng6GAwfq1lsF2ZXofsFVqjhLQPA3Eo1dMAXRbr_5/"
         val gson = GsonBuilder()
             .setLenient()
             .create()
@@ -35,7 +36,7 @@ class RetrofitClient @Inject constructor(
                     .readTimeout(60, TimeUnit.SECONDS)
                     .connectTimeout(60, TimeUnit.SECONDS)
                     .addInterceptor(NetworkInterceptor(context))
-                    .addInterceptor(AuthInterceptor())
+//                    .addInterceptor(AuthInterceptor())
                     .also {
                         it.addInterceptor(logging)
                     }
