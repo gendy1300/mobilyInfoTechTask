@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.ksp)
+    id("dagger.hilt.android.plugin")
 }
 
 android {
@@ -42,7 +43,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.4"
     }
     packaging {
         resources {
@@ -61,6 +62,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -78,4 +80,22 @@ dependencies {
 
     //Coil image
     implementation(libs.coil)
+
+    //SplashScreen
+    implementation(libs.splashScreen)
+
+
+    // Retrofit
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.gsonConverter)
+    implementation(libs.retrofit.loggingInterceptor)
+
+
+    //LottieAnimations
+    implementation(libs.lottie)
+
+    //DataStore
+    implementation(libs.dataStore)
+
+
 }
