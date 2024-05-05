@@ -1,4 +1,4 @@
-# BugTracker Android App
+# BugIt Android App
 
 BugTracker is an Android application developed using Jetpack Compose and MVI (Model-View-Intent) architecture. It serves as a bug tracking system, allowing users to report bugs along with a photo, description, title, reporter name, and date. Bugs are uploaded into a Google Sheets document for easy tracking and management.
 
