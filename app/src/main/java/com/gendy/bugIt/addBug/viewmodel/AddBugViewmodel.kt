@@ -18,6 +18,8 @@ import com.gendy.bugIt.home.domain.model.BugsListModel
 import com.gendy.bugIt.utils.createTodayDate
 import com.gendy.bugIt.utils.getImageFile
 import com.gendy.bugIt.utils.navigation.AppNavigator
+import com.gendy.bugIt.utils.navigation.screens.AddBugScreens
+import com.gendy.bugIt.utils.navigation.screens.HomeScreens
 import com.gendy.bugIt.utils.preferences.PreferencesManager
 import com.gendy.bugIt.utils.retrofit.ApiResult
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -110,7 +112,11 @@ class AddBugViewmodel @Inject constructor(
                     AddBugUiState.NetworkError("No internet Connection")
 
                 is ApiResult.Success -> {
-                    appNavigator.navigateBack()
+                    addBugFields.value = AddBugScreenFields()
+
+                    appNavigator.navigateBack(AddBugScreens.AddBugScreen(),inclusive = true)
+                    appNavigator.navigateTo(HomeScreens.ROOT_ROUTE)
+
                 }
             }
         }
