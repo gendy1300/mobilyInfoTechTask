@@ -16,6 +16,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,7 +26,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
@@ -37,6 +41,7 @@ import com.gendy.bugIt.utils.BugItButton
 import com.gendy.bugIt.utils.BugItTextField
 import com.gendy.bugIt.utils.LabelText
 import com.gendy.bugIt.utils.Margin
+import com.gendy.bugIt.utils.getActivity
 import com.gendy.bugIt.utils.getImageFile
 import com.gendy.bugIt.utils.theme.ScreenPadding
 
@@ -48,11 +53,38 @@ fun AddBugScreen(
     showLoading: (Boolean) -> Unit
 ) {
 
+    val context = LocalContext.current
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+
     val addBugScreenFields by viewmodel.addBugFields
 
+    val uiState by viewmodel.addBugUiState.collectAsState()
+
+    val currentActivity = context.getActivity()
+
+    LaunchedEffect(Unit) {
+        currentActivity?.let { activity ->
+            viewmodel.processIntent(
+                AddBugViewIntent.GetImage(
+                    lifecycleOwner = lifecycleOwner,
+                    currentActivity = activity,
+                    context = context
+                )
+            )
+        }
+    }
+
+    when (uiState) {
+        AddBugUiState.CreatingABug -> showLoading(true)
+        is AddBugUiState.Idle -> showLoading(false)
+        is AddBugUiState.NetworkError -> showSnackBar((uiState as AddBugUiState.NetworkError).errorMessage)
+        AddBugUiState.UploadingImage -> showLoading(true)
+    }
 
 
-    AddBugLayout(addBugScreenFields) { imageUri: Uri ->
+    AddBugLayout(addBugScreenFields) { addBugData: AddBugScreenFields ->
+        viewmodel.addBugFields.value = addBugData
         viewmodel.processIntent(AddBugViewIntent.UploadBug)
     }
 
@@ -60,7 +92,10 @@ fun AddBugScreen(
 
 
 @Composable
-fun AddBugLayout(addBugScreenFields: AddBugScreenFields, onConfirm: (imageUri: Uri) -> Unit) {
+fun AddBugLayout(
+    addBugScreenFields: AddBugScreenFields,
+    onConfirm: (bugData: AddBugScreenFields) -> Unit
+) {
 
     val context = LocalContext.current
 
@@ -87,8 +122,9 @@ fun AddBugLayout(addBugScreenFields: AddBugScreenFields, onConfirm: (imageUri: U
                 .padding(ScreenPadding)
                 .verticalScroll(state = rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
 
-            ) {
+        ) {
 
             Margin(10.dp)
             AsyncImage(
@@ -102,7 +138,7 @@ fun AddBugLayout(addBugScreenFields: AddBugScreenFields, onConfirm: (imageUri: U
 
 
 
-            AddBugImage(modifier = Modifier.align(Alignment.CenterHorizontally)) { imageUri: Uri ->
+            AddBugImage { imageUri: Uri ->
                 imageFile = getImageFile(imageUri, context)
             }
 
@@ -121,14 +157,20 @@ fun AddBugLayout(addBugScreenFields: AddBugScreenFields, onConfirm: (imageUri: U
                     description = it
                 },
                 label = {
-                    LabelText(text = stringResource(id = R.string.title))
+                    LabelText(text = stringResource(id = R.string.description))
                 })
 
             BugItButton(
                 text = stringResource(id = R.string.addABug),
                 modifier = Modifier.fillMaxWidth(0.7f)
             ) {
-
+                onConfirm(
+                    AddBugScreenFields(
+                        title = title,
+                        photoFile = imageFile,
+                        description = description
+                    )
+                )
             }
 
         }
@@ -150,5 +192,12 @@ fun AddBugImage(modifier: Modifier = Modifier, onImageSelected: (Uri) -> Unit) {
         modifier = modifier,
         text = stringResource(id = R.string.chooseAnImage),
         onClick = { launcher.launch(PickVisualMediaRequest(mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly)) })
+}
+
+
+@Preview
+@Composable
+private fun PreviewAddBugLayout() {
+    AddBugLayout(addBugScreenFields = AddBugScreenFields(), onConfirm = {})
 }
 

@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -112,9 +113,9 @@ fun TicketsLayout(
                 modifier = Modifier
                     .pullRefresh(pullToRefreshState)
                     .padding(padding)
+                    .padding(top = 10.dp)
             ) {
                 LazyColumn(
-                    modifier = Modifier.padding(top = 80.dp, bottom = 50.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(bugsList) { item ->
@@ -207,4 +208,20 @@ fun TicketItemLayout(bugsListModel: BugsListModel, onItemClicked: () -> Unit) {
 
     }
 
+}
+
+
+@Preview
+@Composable
+private fun LayoutPreview() {
+    TicketsLayout(
+        bugsList = listOf(
+            BugsListModel(
+                "vf", "vf", ",vf",
+                "vf", "vf"
+            )
+        ), true, onRefresh = {}
+    ) {
+
+    }
 }

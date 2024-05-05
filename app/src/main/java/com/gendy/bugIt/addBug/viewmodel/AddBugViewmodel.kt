@@ -1,6 +1,14 @@
 package com.gendy.bugIt.addBug.viewmodel;
 
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import androidx.activity.ComponentActivity
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gendy.bugIt.addBug.domain.model.AddBugScreenFields
@@ -8,6 +16,7 @@ import com.gendy.bugIt.addBug.domain.repositories.AddBugRepo
 import com.gendy.bugIt.addBug.presentation.AddBugUiState
 import com.gendy.bugIt.home.domain.model.BugsListModel
 import com.gendy.bugIt.utils.createTodayDate
+import com.gendy.bugIt.utils.getImageFile
 import com.gendy.bugIt.utils.navigation.AppNavigator
 import com.gendy.bugIt.utils.retrofit.ApiResult
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,7 +32,7 @@ class AddBugViewmodel @Inject constructor(
 ) : ViewModel() {
 
 
-    val addBugFields = mutableStateOf(AddBugScreenFields())
+    var addBugFields = mutableStateOf(AddBugScreenFields())
 
     private val _addBugUiState = MutableStateFlow<AddBugUiState>(
         AddBugUiState.Idle(addBugFields.value)
@@ -34,19 +43,30 @@ class AddBugViewmodel @Inject constructor(
         when (intent) {
 
             AddBugViewIntent.UploadBug -> addABug()
+            is AddBugViewIntent.GetImage -> getCurrentImageModel(
+                currentActivity = intent.currentActivity,
+                lifecycleOwner = intent.lifecycleOwner,
+                context = intent.context
+            )
         }
     }
 
 
     private fun addABug() {
         viewModelScope.launch {
+            _addBugUiState.value = AddBugUiState.UploadingImage
 
             addBugFields.value.photoFile?.let {
                 when (val response = repo.uploadImage(it)) {
-                    is ApiResult.Error -> AddBugUiState.NetworkError(response.message.toString())
-                    ApiResult.Loading -> AddBugUiState.UploadingImage
 
-                    ApiResult.NoInternetConnection -> AddBugUiState.NetworkError("No internet Connection")
+                    is ApiResult.Error -> _addBugUiState.value =
+                        AddBugUiState.NetworkError(response.message.toString())
+
+                    ApiResult.Loading -> _addBugUiState.value = AddBugUiState.UploadingImage
+
+                    ApiResult.NoInternetConnection -> _addBugUiState.value =
+                        AddBugUiState.NetworkError("No internet Connection")
+
                     is ApiResult.Success -> {
                         response.data.data?.image?.url?.let { imageUrl ->
                             uploadBugToGoogleSheets(
@@ -79,17 +99,43 @@ class AddBugViewmodel @Inject constructor(
 
             when (val response = repo.addABug(bugData)) {
 
-                is ApiResult.Error -> AddBugUiState.NetworkError(response.message.toString())
+                is ApiResult.Error -> _addBugUiState.value =
+                    AddBugUiState.NetworkError(response.message.toString())
 
-                ApiResult.Loading -> AddBugUiState.CreatingABug
+                ApiResult.Loading -> _addBugUiState.value = AddBugUiState.CreatingABug
 
-                ApiResult.NoInternetConnection -> AddBugUiState.NetworkError("No internet Connection")
+                ApiResult.NoInternetConnection -> _addBugUiState.value =
+                    AddBugUiState.NetworkError("No internet Connection")
+
                 is ApiResult.Success -> {
-
+                    appNavigator.navigateBack()
                 }
             }
         }
 
+    }
+
+    private fun getCurrentImageModel(
+        lifecycleOwner: LifecycleOwner,
+        currentActivity: ComponentActivity?,
+        context: Context
+    ) {
+        lifecycleOwner.lifecycle.addObserver(LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME && currentActivity is Activity) {
+                val intent = currentActivity.intent
+                if (intent != null && intent.action == Intent.ACTION_SEND) {
+
+                    val imageUri = intent.getParcelableExtra<Uri>(Intent.EXTRA_STREAM)
+
+                    if (imageUri != null) {
+
+                        addBugFields.value =
+                            addBugFields.value.copy(photoFile = getImageFile(imageUri, context))
+                    }
+                }
+            }
+
+        })
     }
 }
 

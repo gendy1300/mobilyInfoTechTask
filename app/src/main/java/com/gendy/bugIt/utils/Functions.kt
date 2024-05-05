@@ -2,11 +2,13 @@ package com.gendy.bugIt.utils
 
 import android.content.ContentResolver
 import android.content.Context
+import android.content.ContextWrapper
 import android.database.Cursor
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import androidx.activity.ComponentActivity
 import androidx.compose.material3.SnackbarHostState
 import androidx.core.net.toFile
 import com.gendy.bugIt.home.domain.model.BugsListModel
@@ -106,4 +108,11 @@ fun getImageName(contentResolver: ContentResolver, imageUri: Uri): String? {
         }
     }
     return imageName
+}
+
+
+fun Context.getActivity(): ComponentActivity? = when (this) {
+    is ComponentActivity -> this
+    is ContextWrapper -> baseContext.getActivity()
+    else -> null
 }

@@ -3,6 +3,7 @@ package com.gendy.bugIt.utils.navigation.graphs
 import androidx.compose.runtime.MutableState
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.navDeepLink
 import androidx.navigation.navigation
 import com.gendy.bugIt.addBug.presentation.AddBugScreen
 import com.gendy.bugIt.utils.navigation.composable
@@ -19,8 +20,10 @@ fun NavGraphBuilder.addBugGraph(
     ) {
 
 
-        composable(AddBugScreens.AddBugScreen) { entry ->
-            isBottomSheetVisibleState.value = true
+        composable(AddBugScreens.AddBugScreen, deepLinks = listOf(navDeepLink {
+            action = "android.intent.action.SEND"
+        })) { entry ->
+            isBottomSheetVisibleState.value = false
             AddBugScreen(showSnackBar = showSnackBar, showLoading = showLoading)
         }
 
