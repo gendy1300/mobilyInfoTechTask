@@ -308,11 +308,12 @@ fun LabelText(text: String) {
 }
 
 @Composable
-fun BugItButton(modifier: Modifier = Modifier, text: String, onClick: () -> Unit) {
+fun BugItButton(modifier: Modifier = Modifier,enabled:Boolean = true, text: String, onClick: () -> Unit) {
     Button(
         modifier = modifier,
         colors = ButtonDefaults.buttonColors(backgroundColor = BlueColor),
-        onClick = onClick
+        onClick = onClick,
+        enabled = enabled
     ) {
         BugItText(text = text, color = Color.White)
     }

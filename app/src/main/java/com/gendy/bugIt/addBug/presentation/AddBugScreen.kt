@@ -162,7 +162,8 @@ fun AddBugLayout(
 
             BugItButton(
                 text = stringResource(id = R.string.addABug),
-                modifier = Modifier.fillMaxWidth(0.7f)
+                modifier = Modifier.fillMaxWidth(0.7f),
+                enabled = title.isNotBlank() && description.isNotBlank() && imageFile != null
             ) {
                 onConfirm(
                     AddBugScreenFields(
