@@ -127,6 +127,9 @@ fun TicketsLayout(
                     items(bugsList.reversed()) { item ->
                         TicketItemLayout(item, onItemClicked)
                     }
+                    item {
+                        Margin(5.dp)
+                    }
                 }
 
 
